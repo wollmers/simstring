@@ -1,8 +1,10 @@
 use strict;
 use warnings;
-use Test::More tests => 5;
+use Test::More tests => 6;
 use simstring;
 use utf8;
+
+use Encode;
 
 # *insert = *simstringc::writer_insert;
 # *close = *simstringc::writer_close;
@@ -20,6 +22,13 @@ use utf8;
 # *jaccard = *simstringc::jaccard; 3
 # *overlap = *simstringc::overlap; 4
 
+# simstring::writer->new(
+# 'sample_unicode.db', # database-file
+#  3,                  # n-gram width
+# undef,               # n-gram separator
+# 1                    # unicode false/true
+# );
+
 my $db = simstring::writer->new('sample_unicode.db', 3, undef, 1);
 ok( $db, 'writer->new' );
 $db->insert('スパゲティ');
@@ -33,4 +42,6 @@ $db->swig_threshold_set(0.6);
 ok( $db->swig_threshold_get == 0.6, 'threshold_get: 0.6' );
 
 ok( scalar @{ $db->retrieve('スパゲティー') } == 1, 'retrieve (cosine 0.6)' );
+
+ok(  decode('utf-8',$db->retrieve('スパゲティー')->[0]) =~ m/スパゲティ/ , 'result matches insert' );
 
