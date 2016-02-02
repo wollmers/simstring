@@ -35,8 +35,10 @@
 #include <ios>
 #include <iostream>
 #include <iterator>
+/*
 #include <locale>
 #include <locale.h>
+*/
 #include <string>
 #include <typeinfo>
 #include <vector>
@@ -56,7 +58,7 @@ public:
 
     enum {
         CC_CHAR = 0,    // char
-        CC_WCHAR,       // wchar_t
+    /*    CC_WCHAR,       // wchar_t */
     };
 
     int mode;
@@ -98,8 +100,8 @@ class option_parser :
         ON_OPTION_WITH_ARG(SHORTOPT('d') || LONGOPT("database"))
             name = arg;
 
-        ON_OPTION(SHORTOPT('u') || LONGOPT("unicode"))
-            code = CC_WCHAR;
+        /*ON_OPTION(SHORTOPT('u') || LONGOPT("unicode"))
+            code = CC_WCHAR; */
 
         ON_OPTION_WITH_ARG(SHORTOPT('n') || LONGOPT("ngram"))
             ngram_size = std::atoi(arg);
@@ -255,7 +257,7 @@ int build(option& opt, istream_type& is)
 }
 
 // widen for strings only with ASCII characters.
-template <class char_type>
+/* template <class char_type>
 std::basic_string<char_type> widen(const std::string& str)
 {
     std::basic_string<char_type> dst;
@@ -265,6 +267,7 @@ std::basic_string<char_type> widen(const std::string& str)
     }
     return dst;
 }
+*/
 
 template <class char_type, class istream_type, class ostream_type>
 int retrieve(option& opt, istream_type& is, ostream_type& os)
@@ -323,7 +326,7 @@ int retrieve(option& opt, istream_type& is, ostream_type& os)
             // Output the retrieved strings.
             typename strings_type::const_iterator it;
             for (it = xstrs.begin();it != xstrs.end();++it) {
-                os << os.widen('\t') << *it << std::endl;
+                os << '\t' << *it << std::endl;
             }
             os.flush();
         }
@@ -332,22 +335,22 @@ int retrieve(option& opt, istream_type& is, ostream_type& os)
         if (!opt.quiet) {
             os <<
                 xstrs.size() <<
-                widen<char_type>(" strings retrieved (") <<
+                " strings retrieved (" <<
                 (std::clock() - clk) / (double)CLOCKS_PER_SEC <<
-                widen<char_type>(" sec)") << std::endl;
+                " sec)" << std::endl;
         }
     }
 
     // Output the benchmark information if necessary.
     if (opt.benchmark) {
         os <<
-            widen<char_type>("Total number of queries: ") <<
+            "Total number of queries: " <<
             num_queries << std::endl;
         os <<
-            widen<char_type>("Seconds per query: ") <<
+            "Seconds per query: " <<
             clk_total / (double)CLOCKS_PER_SEC / num_queries << std::endl;
         os <<
-            widen<char_type>("Number of retrieved strings per query: ") <<
+            "Number of retrieved strings per query: " <<
             num_retrieved / (double)num_queries << std::endl;
     }
 
@@ -369,12 +372,12 @@ int main(int argc, char *argv[])
     }
 
     // Change the locale of wcin and wcout if necessary.
-    if (opt.code == option::CC_WCHAR) {
+/*    if (opt.code == option::CC_WCHAR) {
         std::ios_base::sync_with_stdio(false);
         std::locale::global(std::locale("")); 
         std::wcout.imbue(std::locale(""));
         std::wcin.imbue(std::locale(""));
-    }
+    } */
 
     // Branches for the processing mode.
     switch (opt.mode) {
@@ -385,16 +388,16 @@ int main(int argc, char *argv[])
     case option::MODE_BUILD:
         if (opt.code == option::CC_CHAR) {
             return build<char>(opt, std::cin);
-        } else if (opt.code == option::CC_WCHAR) {
+        } /*else if (opt.code == option::CC_WCHAR) {
             return build<wchar_t>(opt, std::wcin);
-        }
+        } */
         break;
     case option::MODE_RETRIEVE:
         if (opt.code == option::CC_CHAR) {
             return retrieve<char>(opt, std::cin, std::cout);
-        } else if (opt.code == option::CC_WCHAR) {
+        } /* else if (opt.code == option::CC_WCHAR) {
             return retrieve<wchar_t>(opt, std::wcin, std::wcout);
-        }
+        } */
         break;
     }
 
