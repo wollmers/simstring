@@ -256,18 +256,6 @@ int build(option& opt, istream_type& is)
     return 0;
 }
 
-// widen for strings only with ASCII characters.
-/* template <class char_type>
-std::basic_string<char_type> widen(const std::string& str)
-{
-    std::basic_string<char_type> dst;
-    std::string::const_iterator it;
-    for (it = str.begin();it != str.end();++it) {
-        dst += static_cast<char_type>(*it);
-    }
-    return dst;
-}
-*/
 
 template <class char_type, class istream_type, class ostream_type>
 int retrieve(option& opt, istream_type& is, ostream_type& os)
@@ -282,15 +270,6 @@ int retrieve(option& opt, istream_type& is, ostream_type& os)
     reader_type db;
     if (!db.open(opt.name)) {
         es << "ERROR: " << db.error() << std::endl;
-        return 1;
-    }
-
-    // Check the size of characters.
-    if (db.char_size() != sizeof(char_type)) {
-        es << "ERROR: Inconsistent character encoding " <<
-            "(DB:" << db.char_size() << ", " <<
-            "CUR:" << sizeof(char_type) << "): " << std::endl;
-        es << "This problem may be solved by specifying -u (--unicode) option." << std::endl;
         return 1;
     }
 
@@ -371,14 +350,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // Change the locale of wcin and wcout if necessary.
-/*    if (opt.code == option::CC_WCHAR) {
-        std::ios_base::sync_with_stdio(false);
-        std::locale::global(std::locale("")); 
-        std::wcout.imbue(std::locale(""));
-        std::wcin.imbue(std::locale(""));
-    } */
-
     // Branches for the processing mode.
     switch (opt.mode) {
     case option::MODE_HELP:
@@ -388,16 +359,12 @@ int main(int argc, char *argv[])
     case option::MODE_BUILD:
         if (opt.code == option::CC_CHAR) {
             return build<char>(opt, std::cin);
-        } /*else if (opt.code == option::CC_WCHAR) {
-            return build<wchar_t>(opt, std::wcin);
-        } */
+        } 
         break;
     case option::MODE_RETRIEVE:
         if (opt.code == option::CC_CHAR) {
             return retrieve<char>(opt, std::cin, std::cout);
-        } /* else if (opt.code == option::CC_WCHAR) {
-            return retrieve<wchar_t>(opt, std::wcin, std::wcout);
-        } */
+        } 
         break;
     }
 
