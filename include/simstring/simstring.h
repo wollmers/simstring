@@ -51,8 +51,6 @@
 #include "cdbpp.h"
 #include "memory_mapped_file.h"
 
-#include "utf8string.h"
-
 #define	SIMSTRING_NAME           "SimString"
 #define	SIMSTRING_COPYRIGHT      "Copyright (c) 2009-2011 Naoaki Okazaki"
 #define	SIMSTRING_MAJOR_VERSION  1
@@ -640,7 +638,7 @@ public:
     bool overlapjoin(const query_type& query, double alpha, results_type& results, bool check)
     {
         int i;
-        const int qsize = query.size(); // XXX: utf8-len
+        const int qsize = query.size();
 
         // Allocate a vector of postings corresponding to n-gram queries.
         inverted_lists_type posts(qsize);
@@ -649,8 +647,8 @@ public:
         // in other words, we do not have to search for strings whose n-gram
         // lengths are out of this range.
         
-        const int xmin = std::max(measure_type::min_size(query.size(), alpha), 1); // XXX: utf8-len
-        const int xmax = std::min(measure_type::max_size(query.size(), alpha), m_max_size); // XXX: utf8-len
+        const int xmin = std::max(measure_type::min_size(query.size(), alpha), 1);
+        const int xmax = std::min(measure_type::max_size(query.size(), alpha), m_max_size);
 
         // Loop for each length in the range.
         for (int xsize = xmin;xsize <= xmax;++xsize) {

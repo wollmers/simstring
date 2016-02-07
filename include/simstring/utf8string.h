@@ -33,7 +33,6 @@ int utf8_strlen(
     return q;
 }
 
-//string utf8_substr(const string& str, unsigned int start=0, unsigned int leng=string::npos);
 template <
     class string_type
     > 
