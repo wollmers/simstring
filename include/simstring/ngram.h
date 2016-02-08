@@ -86,7 +86,7 @@ ngrams(
 
     // Count n-grams in the string.
     ngram_stat_type stat;
-    for (typename string_type::size_type i = 0;i < utf8_strlen(src)-n+1;++i) { 
+    for (int i = 0;i < utf8_strlen(src)-n+1;++i) { 
         string_type ngram = utf8_substr(src, i, n);  
         ++stat[ngram];
     }
