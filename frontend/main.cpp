@@ -64,6 +64,7 @@ public:
     int mode;
     int code;
     std::string name;
+    std::string infile;    
 
     int ngram_size;
     bool be;
@@ -78,6 +79,7 @@ public:
         mode(MODE_RETRIEVE),
         code(CC_CHAR),
         name(""),
+        infile(""),
         ngram_size(3),
         be(false),
         measure(simstring::cosine),
@@ -99,6 +101,9 @@ class option_parser :
 
         ON_OPTION_WITH_ARG(SHORTOPT('d') || LONGOPT("database"))
             name = arg;
+            
+        ON_OPTION_WITH_ARG(SHORTOPT('i') || LONGOPT("infile"))
+            infile = arg;        
 
         /*ON_OPTION(SHORTOPT('u') || LONGOPT("unicode"))
             code = CC_WCHAR; */
@@ -154,6 +159,7 @@ int usage(std::ostream& os, const char *argv0)
     os << "OPTIONS:" << std::endl;
     os << "  -b, --build           build a database for strings read from STDIN" << std::endl;
     os << "  -d, --database=DB     specify a database file" << std::endl;
+    os << "  -i, --infile=path     specify a file as input" << std::endl;
     os << "  -u, --unicode         use Unicode (wchar_t) for representing characters" << std::endl;
     os << "  -n, --ngram=N         specify the unit of n-grams (DEFAULT=3)" << std::endl;
     os << "  -m, --mark            include marks for begins and ends of strings" << std::endl;
@@ -357,7 +363,11 @@ int main(int argc, char *argv[])
     case option::MODE_VERSION:
         return version(std::cout);
     case option::MODE_BUILD:
-        if (opt.code == option::CC_CHAR) {
+        if (opt.infile.length() > 0) {
+            std::ifstream i_file ( opt.infile );
+            return build<char>(opt, i_file );
+        }   
+        else if (opt.code == option::CC_CHAR) {
             return build<char>(opt, std::cin);
         } 
         break;
